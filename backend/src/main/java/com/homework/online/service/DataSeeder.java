@@ -65,7 +65,7 @@ public class DataSeeder implements CommandLineRunner {
         String password = passwordEncoder.encode("123456");
         LocalDateTime now = LocalDateTime.now();
 
-        User wang = createUser("wang", password, "王雅琴", Role.TEACHER, null, "语文");
+        User zeng = createUser("zeng", password, "曾芮", Role.TEACHER, null, "语文");
         User li = createUser("li", password, "李文博", Role.TEACHER, null, "数学");
 
         User zhang = createUser("zhang", password, "张小明", Role.STUDENT, "20240101", null);
@@ -75,8 +75,8 @@ public class DataSeeder implements CommandLineRunner {
         User zhou = createUser("zhou", password, "周思远", Role.STUDENT, "20240105", null);
         User wu = createUser("wu", password, "吴桐", Role.STUDENT, "20240106", null);
 
-        SchoolClass class3 = createClass("高一（3）班 · 语文", "G1-3", wang, now.minusDays(30));
-        SchoolClass class5 = createClass("高一（5）班 · 语文", "G1-5", wang, now.minusDays(25));
+        SchoolClass class3 = createClass("高一（3）班 · 语文", "G1-3", zeng, now.minusDays(30));
+        SchoolClass class5 = createClass("高一（5）班 · 语文", "G1-5", zeng, now.minusDays(25));
         SchoolClass math3 = createClass("高一（3）班 · 数学", "M1-3", li, now.minusDays(20));
 
         for (User student : new User[]{zhang, zhao, sun, qian, zhou, wu}) {
@@ -87,25 +87,25 @@ public class DataSeeder implements CommandLineRunner {
         memberRepository.save(new ClassMember(math3, zhang));
         memberRepository.save(new ClassMember(math3, qian));
 
-        Assignment lotus = createAssignment(class3, wang, "《荷塘月色》第 4-6 段赏析",
+        Assignment lotus = createAssignment(class3, zeng, "《荷塘月色》第 4-6 段赏析",
                 "## 作业要求\n\n1. 阅读朱自清《荷塘月色》第 4—6 段，从**通感、比喻、叠词**三个角度各找出一处例句；\n"
                         + "2. 任选其中一处，写一段不少于 300 字的赏析文字；\n"
                         + "3. 可以手写拍照上传，也可以直接在系统中在线录入。\n\n> 注意：请勿直接复制网络赏析，独立完成。",
                 now.plusDays(2).withHour(21).withMinute(0), 100, true, AssignmentStatus.PUBLISHED, now.minusDays(2));
 
-        Assignment dictation = createAssignment(class3, wang, "古诗文默写 · 必修上册第三单元",
+        Assignment dictation = createAssignment(class3, zeng, "古诗文默写 · 必修上册第三单元",
                 "## 默写范围\n\n- 《短歌行》全文\n- 《归园田居（其一）》前八句\n- 《念奴娇·赤壁怀古》下阕\n\n**提交方式**：在系统内在线录入默写内容，错别字每处扣 2 分。",
                 now.minusDays(1), 50, true, AssignmentStatus.PUBLISHED, now.minusDays(6));
 
-        Assignment reading = createAssignment(class3, wang, "现代文阅读训练（一）",
+        Assignment reading = createAssignment(class3, zeng, "现代文阅读训练（一）",
                 "## 材料\n\n阅读下发材料《故乡的榕树》，完成文后 4 道小题。\n\n1. 分析第 3 段景物描写的作用（6 分）\n2. 理解“榕树是故乡的魂”的含义（8 分）\n3. 概括作者情感变化（6 分）\n4. 结合自身经历写一段 200 字感悟（10 分）",
                 now.minusDays(4), 30, false, AssignmentStatus.PUBLISHED, now.minusDays(10));
 
-        createAssignment(class5, wang, "周末随笔：我身边的小人物",
+        createAssignment(class5, zeng, "周末随笔：我身边的小人物",
                 "## 写作任务\n\n观察身边一位普通劳动者，用细节描写刻画人物，不少于 600 字。\n\n要求：不出现真实姓名，可用化名；结尾有一段抒情性议论。",
                 now.plusDays(4).withHour(21).withMinute(0), 100, false, AssignmentStatus.PUBLISHED, now.minusDays(1));
 
-        createAssignment(class3, wang, "《劝学》论证结构梳理",
+        createAssignment(class3, zeng, "《劝学》论证结构梳理",
                 "（草稿）用思维导图梳理《劝学》的论证层次，下周三前上传图片。",
                 now.plusDays(8), 100, false, AssignmentStatus.DRAFT, null);
 
@@ -113,12 +113,12 @@ public class DataSeeder implements CommandLineRunner {
                 "对酒当歌，人生几何！譬如朝露，去日苦多。\n慨当以慷，忧思难忘。何以解忧？唯有杜康。\n青青子衿，悠悠我心。但为君故，沉吟至今。",
                 now.minusDays(1).minusHours(10), SubmissionStatus.GRADED, 44,
                 "默写整体准确，第 4 句“慨当以慷”后漏写“忧思难忘”，扣 2 分；结尾两句顺序有误，扣 4 分。订正后交组长检查。",
-                now.minusDays(1), wang);
+                now.minusDays(1), zeng);
 
         createSubmission(dictation, zhao,
                 "对酒当歌，人生几何！譬如朝露，去日苦多。……\n山不厌高，海不厌深。周公吐哺，天下归心。",
                 now.minusDays(1).minusHours(5), SubmissionStatus.GRADED, 48,
-                "内容完整，仅一处标点缺失。继续保持！", now.minusDays(1), wang);
+                "内容完整，仅一处标点缺失。继续保持！", now.minusDays(1), zeng);
 
         createSubmission(dictation, sun, "（在线录入内容略）", now.minusDays(1).minusHours(12),
                 SubmissionStatus.SUBMITTED, null, null, null, null);
@@ -133,14 +133,14 @@ public class DataSeeder implements CommandLineRunner {
         createSubmission(reading, wu,
                 "一、景物描写作用：渲染了……（略）\n二、“榕树是故乡的魂”……（略）",
                 now.minusDays(3).minusHours(12), SubmissionStatus.GRADED, 26,
-                "第 3 题概括不够准确，注意分点作答。", now.minusDays(3), wang);
+                "第 3 题概括不够准确，注意分点作答。", now.minusDays(3), zeng);
 
         createSubmission(reading, zhang,
                 "一、景物描写作用：交代时间地点，营造宁静氛围，为下文抒情做铺垫。\n二、榕树见证了几代人的生活，是乡愁的寄托。\n三、由思念到感伤，再到释然。",
                 now.minusDays(3).minusHours(5), SubmissionStatus.GRADED, 28,
-                "要点齐全，第 4 题感悟部分可以更具体。", now.minusDays(3), wang);
+                "要点齐全，第 4 题感悟部分可以更具体。", now.minusDays(3), zeng);
 
-        log.info("已写入演示数据：教师 wang/li，学生 zhang/zhao/sun/qian/zhou/wu，初始密码均为 123456");
+        log.info("已写入演示数据：教师 zeng/li，学生 zhang/zhao/sun/qian/zhou/wu，初始密码均为 123456");
     }
 
     private User createUser(String username, String encodedPassword, String name, Role role, String studentNo, String subject) {

@@ -28,7 +28,7 @@ function seed() {
   return {
     seq: 1000,
     users: [
-      { id: 1, username: 'wang', password: '123456', name: '王雅琴', role: 'TEACHER', subject: '语文', email: 'wang@school.edu.cn', studentNo: null },
+      { id: 1, username: 'zeng', password: '123456', name: '曾芮', role: 'TEACHER', subject: '语文', email: 'zeng@school.edu.cn', studentNo: null },
       { id: 2, username: 'li', password: '123456', name: '李文博', role: 'TEACHER', subject: '数学', email: 'li@school.edu.cn', studentNo: null },
       { id: 11, username: 'zhang', password: '123456', name: '张小明', role: 'STUDENT', studentNo: '20240101', email: 'zhang@stu.edu.cn' },
       { id: 12, username: 'zhao', password: '123456', name: '赵一鸣', role: 'STUDENT', studentNo: '20240102', email: 'zhao@stu.edu.cn' },

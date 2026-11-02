@@ -108,7 +108,7 @@ docker compose up -d --build
 
 | 角色 | 用户名 | 密码 | 说明 |
 | --- | --- | --- | --- |
-| 教师 | `wang` | `123456` | 王雅琴 · 语文，含 2 个班级、5 份作业（含 1 份草稿） |
+| 教师 | `zeng` | `123456` | 曾芮 · 语文，含 2 个班级、5 份作业（含 1 份草稿） |
 | 教师 | `li` | `123456` | 李文博 · 数学 |
 | 学生 | `zhang` | `123456` | 张小明，含已批改 / 待批改 / 待完成三种状态 |
 | 学生 | `zhao` / `sun` / `qian` / `zhou` / `wu` | `123456` | 其他学生，用于批改列表演示 |
@@ -176,7 +176,7 @@ docker compose up -d --build
 # 登录
 curl -X POST http://localhost:8080/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"username":"wang","password":"123456"}'
+  -d '{"username":"zeng","password":"123456"}'
 
 # 布置作业
 curl -X POST http://localhost:8080/api/assignments \

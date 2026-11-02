@@ -59,9 +59,9 @@
           <div class="demo-accounts">
             <div class="t">演示账号（点击直接登录）</div>
             <div class="demo-btns">
-              <button class="demo-btn" @click="quickLogin('wang')">
-                <div class="n">王雅琴 · 语文老师</div>
-                <div class="r">wang / 123456</div>
+              <button class="demo-btn" @click="quickLogin('zeng')">
+                <div class="n">曾芮 · 语文老师</div>
+                <div class="r">zeng / 123456</div>
               </button>
               <button class="demo-btn" @click="quickLogin('zhang')">
                 <div class="n">张小明 · 高一学生</div>
