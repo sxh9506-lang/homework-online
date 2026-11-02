@@ -74,20 +74,18 @@ public class DataSeeder implements CommandLineRunner {
         User qian = createUser("qian", password, "钱多多", Role.STUDENT, "20240104", null);
         User zhou = createUser("zhou", password, "周思远", Role.STUDENT, "20240105", null);
         User wu = createUser("wu", password, "吴桐", Role.STUDENT, "20240106", null);
-        User chen = createUser("chen", password, "陈嘉禾", Role.STUDENT, "20240107", null);
-        User moshen = createUser("moshen", password, "魔神弃子", Role.STUDENT, "20240108", null);
+        User chen = createUser("chen", password, "陈佳和", Role.STUDENT, "20240107", null);
 
         SchoolClass class3 = createClass("高一（3）班 · 语文", "G1-3", zeng, now.minusDays(30));
         SchoolClass class5 = createClass("高一（5）班 · 语文", "G1-5", zeng, now.minusDays(25));
         SchoolClass math3 = createClass("高一（3）班 · 数学", "M1-3", li, now.minusDays(20));
 
-        for (User student : new User[]{zhang, zhao, sun, qian, zhou, wu, chen, moshen}) {
+        for (User student : new User[]{zhang, zhao, sun, qian, zhou, wu, chen}) {
             memberRepository.save(new ClassMember(class3, student));
         }
         memberRepository.save(new ClassMember(class5, sun));
         memberRepository.save(new ClassMember(class5, zhou));
         memberRepository.save(new ClassMember(class5, chen));
-        memberRepository.save(new ClassMember(class5, moshen));
         memberRepository.save(new ClassMember(math3, zhang));
         memberRepository.save(new ClassMember(math3, qian));
 
@@ -108,6 +106,16 @@ public class DataSeeder implements CommandLineRunner {
         createAssignment(class5, zeng, "周末随笔：我身边的小人物",
                 "## 写作任务\n\n观察身边一位普通劳动者，用细节描写刻画人物，不少于 600 字。\n\n要求：不出现真实姓名，可用化名；结尾有一段抒情性议论。",
                 now.plusDays(4).withHour(21).withMinute(0), 100, false, AssignmentStatus.PUBLISHED, now.minusDays(1));
+
+        createAssignment(class3, zeng, "魔神弃子",
+                "## 写作任务\n\n以《魔神弃子》为题，写一篇不少于 800 字的记叙性散文或小说节选。\n\n"
+                        + "## 具体要求\n\n"
+                        + "1. **标题即主题**：“弃”字要落到实处——被谁弃、为何弃、弃后如何；\n"
+                        + "2. 至少有一处**环境描写与心理变化互相映照**，不要写与情绪无关的风景；\n"
+                        + "3. 允许虚构，但细节必须真实可感：气味、声音、触感、光线；\n"
+                        + "4. 结尾不落俗套，慎用“从此过上幸福生活”一类的收束。\n\n"
+                        + "> 提示：这个题目可以写成山野传说中的弃儿，也可以写成被时代、被家庭“放下”的人。想清楚你要写的“魔神”究竟是谁。",
+                now.plusDays(3), 100, true, AssignmentStatus.PUBLISHED, now.minusHours(4));
 
         createAssignment(class3, zeng, "《劝学》论证结构梳理",
                 "（草稿）用思维导图梳理《劝学》的论证层次，下周三前上传图片。",
@@ -144,7 +152,7 @@ public class DataSeeder implements CommandLineRunner {
                 now.minusDays(3).minusHours(5), SubmissionStatus.GRADED, 28,
                 "要点齐全，第 4 题感悟部分可以更具体。", now.minusDays(3), zeng);
 
-        log.info("已写入演示数据：教师 zeng/li，学生 zhang/zhao/sun/qian/zhou/wu/chen/moshen，初始密码均为 123456");
+        log.info("已写入演示数据：教师 zeng/li，学生 zhang/zhao/sun/qian/zhou/wu/chen，初始密码均为 123456");
     }
 
     private User createUser(String username, String encodedPassword, String name, Role role, String studentNo, String subject) {

@@ -16,12 +16,12 @@ npm start          # http://localhost:8080/api ，首次启动生成 db.json 演
 ## 演示脚本
 
 ```bash
-node scripts/complete-homework.mjs                       # 学生「陈嘉禾」把作业做完（已提交的跳过）
-node scripts/complete-homework.mjs --student moshen      # 学生「魔神弃子」（4 份作业，含逾期那份）
+node scripts/complete-homework.mjs                       # 学生「陈佳和」把作业做完（已提交的跳过）
 node scripts/complete-homework.mjs --force               # 重新提交
 node scripts/complete-homework.mjs --allow-late          # 逾期且不允许补交时，由老师临时放开后提交再恢复
 API_BASE=http://localhost:8081 node scripts/complete-homework.mjs
 ```
 
 脚本走真实 HTTP 接口（登录 → 上传手写稿附件 → 提交），不直接改数据库；删除 `db.json` 重置数据库后可再次运行。
-答案库见 `scripts/answers.mjs`（按学生组织，可自行扩展）。
+答案库见 `scripts/answers.mjs`：按学生 profile 组织，`answers` 的 key 可以是**作业 id**，也可以是**作业标题**；
+新增演示学生或新作业时，只需往里加一条即可被脚本识别。

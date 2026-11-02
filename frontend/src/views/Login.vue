@@ -67,13 +67,9 @@
                 <div class="n">张小明 · 高一学生</div>
                 <div class="r">zhang / 123456</div>
               </button>
-              <button class="demo-btn" @click="quickLogin('chen')">
-                <div class="n">陈嘉禾 · 学生（已交 3 份）</div>
+              <button class="demo-btn wide" @click="quickLogin('chen')">
+                <div class="n">陈佳和 · 学生（4 份作业已完成，含《魔神弃子》）</div>
                 <div class="r">chen / 123456</div>
-              </button>
-              <button class="demo-btn" @click="quickLogin('moshen')">
-                <div class="n">魔神弃子 · 学生（已交 4 份）</div>
-                <div class="r">moshen / 123456</div>
               </button>
             </div>
           </div>

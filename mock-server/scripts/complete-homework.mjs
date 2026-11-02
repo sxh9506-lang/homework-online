@@ -76,13 +76,20 @@ async function main() {
   const assignments = await api('/api/assignments');
   const byId = new Map(assignments.map((a) => [a.id, a]));
 
-  const tasks = Object.keys(profile.answers)
-    .map(Number)
-    .filter((id) => byId.has(id))
-    .map((id) => ({ assignment: byId.get(id), content: profile.answers[id], attach: !!profile.attachments?.[id] }));
+  // 支持用作业 id 或作业标题定位
+  const findByKey = (key) => {
+    if (/^\d+$/.test(String(key))) return byId.get(Number(key));
+    const raw = String(key);
+    const plain = raw.replace(/^《|》$/g, '');
+    return assignments.find((a) => a.title === raw) || assignments.find((a) => a.title === plain);
+  };
 
-  const missingIds = Object.keys(profile.answers).map(Number).filter((id) => !byId.has(id));
-  if (missingIds.length) console.log(`- 作业 ${missingIds.join(', ')} 对该学生不可见（未发布或不在该班级），已跳过`);
+  const tasks = Object.keys(profile.answers)
+    .map((key) => ({ assignment: findByKey(key), content: profile.answers[key], attach: !!profile.attachments?.[key] }))
+    .filter((t) => t.assignment);
+
+  const missing = Object.keys(profile.answers).filter((key) => !findByKey(key));
+  if (missing.length) console.log(`- 未找到作业：${missing.join('、')}（未发布或不在该学生班级），已跳过`);
 
   const lateTouched = [];
   let submitted = 0;

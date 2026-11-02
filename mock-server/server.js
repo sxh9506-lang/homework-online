@@ -36,8 +36,7 @@ function seed() {
       { id: 14, username: 'qian', password: '123456', name: '钱多多', role: 'STUDENT', studentNo: '20240104', email: 'qian@stu.edu.cn' },
       { id: 15, username: 'zhou', password: '123456', name: '周思远', role: 'STUDENT', studentNo: '20240105', email: 'zhou@stu.edu.cn' },
       { id: 16, username: 'wu', password: '123456', name: '吴桐', role: 'STUDENT', studentNo: '20240106', email: 'wu@stu.edu.cn' },
-      { id: 17, username: 'chen', password: '123456', name: '陈嘉禾', role: 'STUDENT', studentNo: '20240107', email: 'chen@stu.edu.cn' },
-      { id: 18, username: 'moshen', password: '123456', name: '魔神弃子', role: 'STUDENT', studentNo: '20240108', email: 'moshen@stu.edu.cn' }
+      { id: 17, username: 'chen', password: '123456', name: '陈佳和', role: 'STUDENT', studentNo: '20240107', email: 'chen@stu.edu.cn' }
     ],
     classes: [
       { id: 1, name: '高一（3）班 · 语文', code: 'G1-3', teacherId: 1, createdAt: nowISO(-30 * DAY) },
@@ -48,7 +47,6 @@ function seed() {
       { classId: 1, userId: 11 }, { classId: 1, userId: 12 }, { classId: 1, userId: 13 },
       { classId: 1, userId: 14 }, { classId: 1, userId: 15 }, { classId: 1, userId: 16 }, { classId: 1, userId: 17 },
       { classId: 2, userId: 13 }, { classId: 2, userId: 15 }, { classId: 2, userId: 17 },
-      { classId: 1, userId: 18 }, { classId: 2, userId: 18 },
       { classId: 3, userId: 11 }, { classId: 3, userId: 14 }
     ],
     files: [],
@@ -79,6 +77,20 @@ function seed() {
         content: '## 写作任务\n\n观察身边一位普通劳动者，用细节描写刻画人物，不少于 600 字。\n\n要求：不出现真实姓名，可用化名；结尾有一段抒情性议论。',
         dueAt: nowISO(4 * DAY), totalScore: 100, allowLate: false, status: 'PUBLISHED',
         attachments: [], createdAt: nowISO(-1 * DAY), publishedAt: nowISO(-1 * DAY)
+      },
+      {
+        id: 106, title: '魔神弃子', classId: 1, teacherId: 1,
+        content:
+          '## 写作任务\n\n' +
+          '以《魔神弃子》为题，写一篇不少于 800 字的记叙性散文或小说节选。\n\n' +
+          '## 具体要求\n\n' +
+          '1. **标题即主题**：“弃”字要落到实处——被谁弃、为何弃、弃后如何；\n' +
+          '2. 至少有一处**环境描写与心理变化互相映照**，不要写与情绪无关的风景；\n' +
+          '3. 允许虚构，但细节必须真实可感：气味、声音、触感、光线；\n' +
+          '4. 结尾不落俗套，慎用“从此过上幸福生活”一类的收束。\n\n' +
+          '> 提示：这个题目可以写成山野传说中的弃儿，也可以写成被时代、被家庭“放下”的人。想清楚你要写的“魔神”究竟是谁。',
+        dueAt: nowISO(3 * DAY), totalScore: 100, allowLate: true, status: 'PUBLISHED',
+        attachments: [], createdAt: nowISO(-4 * 3600000), publishedAt: nowISO(-4 * 3600000)
       },
       {
         id: 105, title: '《劝学》论证结构梳理', classId: 1, teacherId: 1,
