@@ -1,0 +1,9 @@
+{
+  "name": "homework-online-mock-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "与 Spring Boot 后端保持同一套 REST 契约的演示用 Mock API（仅用于无需 JDK 的本地预览）",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "cors": "^2.8.5", "express": "^4.21.1", "multer": "^2.0.0" }
+}

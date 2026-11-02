@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: homework-online
+  # 默认使用 H2 文件数据库，零配置启动；数据保存在 ./data 目录
+  datasource:
+    url: jdbc:h2:file:./data/homework;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Shanghai
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
+  jackson:
+    time-zone: Asia/Shanghai
+    default-property-inclusion: always
+
+app:
+  # 上传文件保存目录（相对启动目录）
+  upload-dir: ./uploads
+  jwt:
+    # 生产环境务必替换为随机长字符串，或通过环境变量 APP_JWT_SECRET 注入
+    secret: ${APP_JWT_SECRET:homework-online-dev-secret-please-change-in-production-8192}
+    ttl-hours: 168
+  cors:
+    allowed-origins: "*"
+  seed-demo-data: true
+
+logging:
+  level:
+    com.homework.online: INFO

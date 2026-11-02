@@ -1,0 +1,30 @@
+# 依赖
+node_modules/
+.pnp/
+.pnp.js
+
+# 构建产物
+dist/
+build/
+out/
+target/
+*.class
+
+# 运行时数据（演示数据库、上传文件、日志）
+mock-server/db.json
+mock-server/uploads/
+backend/data/
+backend/uploads/
+backend/logs/
+*.log
+
+# 本地环境变量
+.env
+.env.local
+.env.*.local
+
+# 编辑器 / 系统
+.idea/
+.vscode/
+.DS_Store
+*.iml
