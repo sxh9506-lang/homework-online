@@ -74,16 +74,18 @@ public class DataSeeder implements CommandLineRunner {
         User qian = createUser("qian", password, "钱多多", Role.STUDENT, "20240104", null);
         User zhou = createUser("zhou", password, "周思远", Role.STUDENT, "20240105", null);
         User wu = createUser("wu", password, "吴桐", Role.STUDENT, "20240106", null);
+        User chen = createUser("chen", password, "陈嘉禾", Role.STUDENT, "20240107", null);
 
         SchoolClass class3 = createClass("高一（3）班 · 语文", "G1-3", zeng, now.minusDays(30));
         SchoolClass class5 = createClass("高一（5）班 · 语文", "G1-5", zeng, now.minusDays(25));
         SchoolClass math3 = createClass("高一（3）班 · 数学", "M1-3", li, now.minusDays(20));
 
-        for (User student : new User[]{zhang, zhao, sun, qian, zhou, wu}) {
+        for (User student : new User[]{zhang, zhao, sun, qian, zhou, wu, chen}) {
             memberRepository.save(new ClassMember(class3, student));
         }
         memberRepository.save(new ClassMember(class5, sun));
         memberRepository.save(new ClassMember(class5, zhou));
+        memberRepository.save(new ClassMember(class5, chen));
         memberRepository.save(new ClassMember(math3, zhang));
         memberRepository.save(new ClassMember(math3, qian));
 
@@ -140,7 +142,7 @@ public class DataSeeder implements CommandLineRunner {
                 now.minusDays(3).minusHours(5), SubmissionStatus.GRADED, 28,
                 "要点齐全，第 4 题感悟部分可以更具体。", now.minusDays(3), zeng);
 
-        log.info("已写入演示数据：教师 zeng/li，学生 zhang/zhao/sun/qian/zhou/wu，初始密码均为 123456");
+        log.info("已写入演示数据：教师 zeng/li，学生 zhang/zhao/sun/qian/zhou/wu/chen，初始密码均为 123456");
     }
 
     private User createUser(String username, String encodedPassword, String name, Role role, String studentNo, String subject) {

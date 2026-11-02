@@ -35,7 +35,8 @@ function seed() {
       { id: 13, username: 'sun', password: '123456', name: '孙悦', role: 'STUDENT', studentNo: '20240103', email: 'sun@stu.edu.cn' },
       { id: 14, username: 'qian', password: '123456', name: '钱多多', role: 'STUDENT', studentNo: '20240104', email: 'qian@stu.edu.cn' },
       { id: 15, username: 'zhou', password: '123456', name: '周思远', role: 'STUDENT', studentNo: '20240105', email: 'zhou@stu.edu.cn' },
-      { id: 16, username: 'wu', password: '123456', name: '吴桐', role: 'STUDENT', studentNo: '20240106', email: 'wu@stu.edu.cn' }
+      { id: 16, username: 'wu', password: '123456', name: '吴桐', role: 'STUDENT', studentNo: '20240106', email: 'wu@stu.edu.cn' },
+      { id: 17, username: 'chen', password: '123456', name: '陈嘉禾', role: 'STUDENT', studentNo: '20240107', email: 'chen@stu.edu.cn' }
     ],
     classes: [
       { id: 1, name: '高一（3）班 · 语文', code: 'G1-3', teacherId: 1, createdAt: nowISO(-30 * DAY) },
@@ -44,8 +45,8 @@ function seed() {
     ],
     members: [
       { classId: 1, userId: 11 }, { classId: 1, userId: 12 }, { classId: 1, userId: 13 },
-      { classId: 1, userId: 14 }, { classId: 1, userId: 15 }, { classId: 1, userId: 16 },
-      { classId: 2, userId: 13 }, { classId: 2, userId: 15 },
+      { classId: 1, userId: 14 }, { classId: 1, userId: 15 }, { classId: 1, userId: 16 }, { classId: 1, userId: 17 },
+      { classId: 2, userId: 13 }, { classId: 2, userId: 15 }, { classId: 2, userId: 17 },
       { classId: 3, userId: 11 }, { classId: 3, userId: 14 }
     ],
     files: [],

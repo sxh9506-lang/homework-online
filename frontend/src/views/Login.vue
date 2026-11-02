@@ -67,6 +67,10 @@
                 <div class="n">张小明 · 高一学生</div>
                 <div class="r">zhang / 123456</div>
               </button>
+              <button class="demo-btn wide" @click="quickLogin('chen')">
+                <div class="n">陈嘉禾 · 高一学生（作业已完成，待批改）</div>
+                <div class="r">chen / 123456</div>
+              </button>
             </div>
           </div>
         </template>
