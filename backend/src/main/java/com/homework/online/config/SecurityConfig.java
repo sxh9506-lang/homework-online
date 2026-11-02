@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/debug/auth").permitAll()
                         // 文件读取需要被 <img> 直接访问，故放开 GET；写操作仍需登录
                         .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
                         .requestMatchers("/h2-console/**", "/error").permitAll()

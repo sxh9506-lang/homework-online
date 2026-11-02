@@ -1,14 +1,25 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import { storage, setTokenCookie, getTokenCookie } from '../utils/storage'
 
 export const TOKEN_KEY = 'hw_token'
 export const USER_KEY = 'hw_user'
 
+/** 读取当前令牌：优先 localStorage（或内存），其次 Cookie 通道 */
+export function readToken() {
+  return storage.get(TOKEN_KEY) || getTokenCookie() || ''
+}
+
 export const http = axios.create({ baseURL: '/api', timeout: 60000 })
 
 http.interceptors.request.use((config) => {
-  const token = localStorage.getItem(TOKEN_KEY)
-  if (token) config.headers.Authorization = `Bearer ${token}`
+  const token = readToken()
+  if (token) {
+    // 双通道：请求头 + 同源 Cookie，避免某一通道被中间层丢弃导致全部接口 401
+    config.headers.Authorization = `Bearer ${token}`
+    config.headers['X-Auth-Token'] = token
+    setTokenCookie(token)
+  }
   return config
 })
 
@@ -21,10 +32,16 @@ http.interceptors.response.use(
       (error.code === 'ECONNABORTED' ? '请求超时，请稍后重试' : null) ||
       (status ? `请求失败（${status}）` : '网络异常，请确认后端服务已启动')
     if (status === 401) {
-      localStorage.removeItem(TOKEN_KEY)
-      localStorage.removeItem(USER_KEY)
+      const hadToken = !!readToken()
+      storage.remove(TOKEN_KEY)
+      storage.remove(USER_KEY)
+      setTokenCookie('')
       if (!location.hash.includes('/login')) {
-        ElMessage.error(message)
+        ElMessage.error(
+          hadToken
+            ? '登录状态已失效（请求未通过鉴权），请重新登录。若反复出现请查看「个人中心 → 连接诊断」'
+            : message
+        )
         location.hash = '#/login'
       }
     } else {
@@ -38,7 +55,9 @@ export const authApi = {
   login: (data) => http.post('/auth/login', data),
   register: (data) => http.post('/auth/register', data),
   me: () => http.get('/auth/me'),
-  updateProfile: (data) => http.put('/auth/profile', data)
+  updateProfile: (data) => http.put('/auth/profile', data),
+  /** 连接诊断：查看后端是否可达、凭证走了哪条通道 */
+  diagnose: () => http.get('/debug/auth')
 }
 
 export const classApi = {

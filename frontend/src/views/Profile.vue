@@ -44,6 +44,30 @@
       </div>
 
       <div class="card card-pad" style="margin-top: 16px">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px">
+          <h4 style="margin: 0">🩺 连接诊断</h4>
+          <el-button size="small" :loading="diagnosing" style="margin-left: auto" @click="runDiagnose">
+            开始诊断
+          </el-button>
+        </div>
+        <div class="muted small" style="line-height: 1.9; margin-bottom: 10px">
+          若出现「登录后又提示未登录」，点这里可以确认后端是否可达、登录凭证走了哪条通道（请求头 / Cookie）。
+        </div>
+        <div v-if="diagnose" class="diag">
+          <div class="diag-row">
+            <span>鉴权结果</span>
+            <b :class="diagnose.ok ? 'ok' : 'bad'">{{ diagnose.ok ? '正常' : '异常' }}</b>
+          </div>
+          <div class="diag-row"><span>凭证通道</span><b>{{ diagSource }}</b></div>
+          <div class="diag-row"><span>Authorization 头</span><b>{{ diagnose.hasAuthorizationHeader ? '已发送' : '未发送' }}</b></div>
+          <div class="diag-row"><span>Cookie 通道</span><b>{{ diagnose.hasCookie ? '已发送' : '未发送' }}</b></div>
+          <div class="diag-row"><span>本地令牌</span><b>{{ localToken ? `已保存（${localToken.length} 字符）` : '无' }}</b></div>
+          <div class="diag-row"><span>服务端识别用户</span><b>{{ diagnose.user ? `${diagnose.user.name}（${diagnose.user.role}）` : '—' }}</b></div>
+          <div v-if="diagnose.reason" class="diag-reason">{{ diagnose.reason }}</div>
+        </div>
+      </div>
+
+      <div class="card card-pad" style="margin-top: 16px">
         <h4 style="margin-bottom: 12px">🔐 账号安全</h4>
         <div class="muted small" style="line-height: 1.9">
           当前使用 JWT 无状态登录，令牌保存在浏览器本地；如遇令牌过期，系统会自动跳转登录页。
@@ -60,7 +84,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { auth } from '../store/auth'
-import { authApi } from '../api'
+import { authApi, readToken } from '../api'
 import { avatarColor, avatarText } from '../utils/format'
 
 const router = useRouter()
@@ -69,6 +93,40 @@ const isTeacher = computed(() => user.value.role === 'TEACHER')
 
 const saving = ref(false)
 const form = reactive({ name: user.value.name || '', email: user.value.email || '' })
+
+const diagnose = ref(null)
+const diagnosing = ref(false)
+const localToken = computed(() => readToken())
+const diagSource = computed(() => {
+  const map = {
+    'authorization-header': 'Authorization 请求头',
+    'x-auth-token-header': 'X-Auth-Token 请求头',
+    query: 'URL 参数',
+    cookie: 'Cookie（请求头通道被拦截时的兜底）',
+    none: '未携带任何凭证'
+  }
+  return map[diagnose.value?.tokenSource] || diagnose.value?.tokenSource || '—'
+})
+
+async function runDiagnose() {
+  diagnosing.value = true
+  try {
+    diagnose.value = await authApi.diagnose()
+    ElMessage[diagnose.value.ok ? 'success' : 'warning'](
+      diagnose.value.ok ? '鉴权正常，后端连接通畅' : diagnose.value.reason || '鉴权异常'
+    )
+  } catch (e) {
+    diagnose.value = {
+      ok: false,
+      tokenSource: 'none',
+      reason: '无法连接后端接口，请确认后端服务已启动（默认 8080）',
+      user: null
+    }
+    ElMessage.error('诊断请求失败')
+  } finally {
+    diagnosing.value = false
+  }
+}
 
 async function save() {
   saving.value = true
@@ -92,6 +150,18 @@ function logout() {
 .profile-head { display: flex; align-items: center; gap: 18px; }
 .guide { margin: 0; padding-left: 20px; color: var(--ink-2); font-size: 13px; line-height: 2.1; }
 code { background: #f2f4fa; padding: 1px 5px; border-radius: 4px; }
+.diag { border-top: 1px dashed var(--line); padding-top: 10px; }
+.diag-row {
+  display: flex; justify-content: space-between; gap: 10px;
+  font-size: 12.5px; color: var(--ink-3); padding: 5px 0;
+}
+.diag-row b { color: var(--ink); font-weight: 550; }
+.diag-row b.ok { color: var(--ok); }
+.diag-row b.bad { color: var(--danger); }
+.diag-reason {
+  margin-top: 8px; padding: 8px 10px; border-radius: 8px;
+  background: #fdf0f0; color: #b03033; font-size: 12.5px; line-height: 1.7;
+}
 @media (max-width: 1000px) {
   .profile-grid { grid-template-columns: 1fr; }
 }

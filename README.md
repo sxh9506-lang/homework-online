@@ -209,7 +209,10 @@ curl -X POST http://localhost:8080/api/submissions/1/grade \
 
 ## 八、安全与生产注意事项
 
-- 登录使用 JWT（HS256，默认 7 天有效），无状态鉴权；令牌存于浏览器 localStorage，过期自动跳转登录页。
+- 登录使用 JWT（HS256，默认 7 天有效），无状态鉴权；令牌存于浏览器 localStorage，并同步写入同源 Cookie
+  `hw_token`，请求时**同时**通过 `Authorization: Bearer` / `X-Auth-Token` 头与 Cookie 发送（多通道冗余，
+  兼容会丢弃请求头或分区存储的预览/反向代理环境）。服务端按 `Authorization → X-Auth-Token → ?token= → Cookie` 顺序取令牌。
+- 前端提供「个人中心 → 连接诊断」（`GET /api/debug/auth`），可直接看到后端是否可达、凭证走了哪条通道、服务端识别到的用户。
 - 密码使用 BCrypt 加盐哈希存储，接口不返回密码字段。
 - 所有业务接口做角色与数据归属校验（教师只能操作自己的班级/作业/提交，学生只能看自己的提交）。
 - **`GET /api/files/**` 未鉴权**（为让浏览器 `<img>` 直接显示作业照片），生产环境建议改为带签名的临时 URL 或网关鉴权。
@@ -224,6 +227,7 @@ curl -X POST http://localhost:8080/api/submissions/1/grade \
 | --- | --- |
 | 前端 401 | 令牌过期或后端未启动，重新登录 |
 | 上传失败 | 单文件 ≤ 20MB，最多 5 个；检查 `app.upload-dir` 目录权限 |
+| 登录后又提示未登录 | 打开「个人中心 → 连接诊断」：`凭证通道` 显示 `none` 说明代理没有转发请求头/Cookie；`本地令牌` 为「无」说明浏览器禁止了本地存储（此时 Cookie 通道会兜底，重新登录一次即可） |
 | 学生看不到作业 | 确认作业已「发布」且学生已加入对应班级 |
 | 提交时提示已截止 | 作业不允许补交时会拒绝，教师可编辑作业打开「允许逾期补交」 |
 | 端口冲突 | 后端 `--server.port=8081`，前端改 `vite.config.js` 中 `VITE_API_TARGET` |

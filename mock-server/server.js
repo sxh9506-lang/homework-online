@@ -289,6 +289,20 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 
+// 每个 /api 请求记录一行日志：方法、路径、凭证来源、状态码，便于排查代理链路问题
+app.use('/api', (req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const { source } = resolveToken(req);
+    const who = req.user ? req.user.username : '-';
+    console.log(
+      `[api] ${new Date().toISOString()} ${req.method} ${req.originalUrl} -> ${res.statusCode} ` +
+        `auth=${source || 'none'} user=${who} ${Date.now() - start}ms`
+    );
+  });
+  next();
+});
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOAD_DIR),
@@ -303,13 +317,49 @@ const upload = multer({
 function signToken(user) {
   return Buffer.from(JSON.stringify({ uid: user.id, exp: Date.now() + 7 * DAY })).toString('base64url');
 }
+/** 从 Cookie 头中解析指定名称的值 */
+function readCookie(req, name) {
+  const raw = req.headers.cookie || '';
+  for (const part of raw.split(';')) {
+    const index = part.indexOf('=');
+    if (index < 0) continue;
+    if (part.slice(0, index).trim() === name) {
+      try {
+        return decodeURIComponent(part.slice(index + 1).trim());
+      } catch {
+        return part.slice(index + 1).trim();
+      }
+    }
+  }
+  return '';
+}
+
+/**
+ * 令牌来源按优先级：Authorization: Bearer → X-Auth-Token → query.token → Cookie。
+ * 多通道是为了兼容预览代理 / 反向代理可能丢弃某个请求头的场景。
+ */
+function resolveToken(req) {
+  const header = req.headers.authorization || '';
+  const bearer = /^bearer\s+(.+)$/i.exec(header.trim());
+  if (bearer) return { token: bearer[1].trim(), source: 'authorization-header' };
+  if (req.headers['x-auth-token']) return { token: String(req.headers['x-auth-token']).trim(), source: 'x-auth-token-header' };
+  if (req.query && req.query.token) return { token: String(req.query.token).trim(), source: 'query' };
+  const cookie = readCookie(req, 'hw_token');
+  if (cookie) return { token: cookie, source: 'cookie' };
+  return { token: null, source: null };
+}
+
 function auth(req, res, next) {
-  const h = req.headers.authorization || '';
-  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
-  if (!token) return res.status(401).json({ message: '未登录或登录已过期' });
+  const { token, source } = resolveToken(req);
+  req.authSource = source;
+  if (!token) {
+    return res.status(401).json({ message: '未登录或登录已过期（请求未携带登录凭证）' });
+  }
   try {
     const payload = JSON.parse(Buffer.from(token, 'base64url').toString('utf8'));
-    if (!payload.exp || payload.exp < Date.now()) return res.status(401).json({ message: '登录已过期，请重新登录' });
+    if (!payload.exp || payload.exp < Date.now()) {
+      return res.status(401).json({ message: '登录已过期，请重新登录' });
+    }
     const user = userById(payload.uid);
     if (!user) return res.status(401).json({ message: '用户不存在' });
     req.user = user;
@@ -358,6 +408,43 @@ app.post('/api/auth/register', (req, res) => {
 });
 
 app.get('/api/auth/me', auth, (req, res) => res.json(publicUser(req.user)));
+
+/** 连接诊断：用于定位预览环境里“登录后仍提示未登录”的问题 */
+app.get('/api/debug/auth', (req, res) => {
+  const { token, source } = resolveToken(req);
+  const result = {
+    ok: false,
+    tokenSource: source || 'none',
+    hasAuthorizationHeader: !!req.headers.authorization,
+    hasXAuthTokenHeader: !!req.headers['x-auth-token'],
+    hasCookie: !!readCookie(req, 'hw_token'),
+    tokenLength: token ? token.length : 0,
+    user: null,
+    reason: null
+  };
+  if (!token) {
+    result.reason = '服务端没有收到任何登录凭证（请求头与 Cookie 都没有令牌）';
+    return res.json(result);
+  }
+  try {
+    const payload = JSON.parse(Buffer.from(token, 'base64url').toString('utf8'));
+    if (!payload.exp || payload.exp < Date.now()) {
+      result.reason = '令牌已过期';
+      return res.json(result);
+    }
+    const user = userById(payload.uid);
+    if (!user) {
+      result.reason = '令牌对应的用户不存在（可能演示数据被重建）';
+      return res.json(result);
+    }
+    result.ok = true;
+    result.user = publicUser(user);
+    res.json(result);
+  } catch {
+    result.reason = '令牌格式无效';
+    res.json(result);
+  }
+});
 
 app.put('/api/auth/profile', auth, (req, res) => {
   const { name, email } = req.body || {};

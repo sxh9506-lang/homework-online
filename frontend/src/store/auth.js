@@ -1,16 +1,17 @@
 import { reactive, computed } from 'vue'
-import { authApi, TOKEN_KEY, USER_KEY } from '../api'
+import { authApi, TOKEN_KEY, USER_KEY, readToken } from '../api'
+import { storage, setTokenCookie } from '../utils/storage'
 
 function readUser() {
   try {
-    return JSON.parse(localStorage.getItem(USER_KEY) || 'null')
+    return JSON.parse(storage.get(USER_KEY) || 'null')
   } catch {
     return null
   }
 }
 
 const state = reactive({
-  token: localStorage.getItem(TOKEN_KEY) || '',
+  token: readToken(),
   user: readUser(),
   loading: false
 })
@@ -18,10 +19,15 @@ const state = reactive({
 function persist(token, user) {
   state.token = token
   state.user = user
-  if (token) localStorage.setItem(TOKEN_KEY, token)
-  else localStorage.removeItem(TOKEN_KEY)
-  if (user) localStorage.setItem(USER_KEY, JSON.stringify(user))
-  else localStorage.removeItem(USER_KEY)
+  if (token) {
+    storage.set(TOKEN_KEY, token)
+    setTokenCookie(token)
+  } else {
+    storage.remove(TOKEN_KEY)
+    setTokenCookie('')
+  }
+  if (user) storage.set(USER_KEY, JSON.stringify(user))
+  else storage.remove(USER_KEY)
 }
 
 export const auth = {
