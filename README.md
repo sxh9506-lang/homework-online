@@ -47,6 +47,8 @@ homework-online/
 │       └── styles/main.css      # 设计系统
 ├── mock-server/                 # 演示用 Node Mock API（同契约，数据存 db.json）
 ├── docker-compose.yml           # MySQL + 后端 + 前端一键部署
+├── docs/
+│   └── chaoxing-integration-assessment.md   # 接入学习通（超星）可行性评估
 └── README.md
 ```
 
